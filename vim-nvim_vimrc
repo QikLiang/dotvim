@@ -1,0 +1,51 @@
+map <F7> mzgg=G`z
+
+"use alt for mapping
+set winaltkeys=no
+
+"make file search easier
+cd C:\Users\Qi\Desktop\programs
+let g:ctrlp_working_path_mode = 'a'
+autocmd BufReadPost * :lcd %:p:h
+
+"code folding
+set foldmethod=syntax
+autocmd BufWinLeave *.* mkview
+autocmd BufWinEnter *.* silent loadview
+autocmd BufWinEnter *.java set foldnestmax=2
+autocmd BufWinEnter *.cpp set foldnestmax=1
+autocmd BufReadPost *.java :normal! zRzm
+
+"caps lock mapping
+imap <Esc> <Plug>CapsLockToggle
+
+let g:AutoPairsMultilineClose = 0
+
+"paste test test object keybinding
+let g:pastedtext_select_key = 'P'
+
+"autocomplete
+imap <S-Enter> <c-n>
+
+"search and replace
+set gdefault
+
+syntax enable
+
+colorscheme solarized
+set laststatus=2
+let g:airline_powerline_fonts=1
+"set guifont=Inconsolata-g\ for\ Powerline:h12
+set guifont=Ubuntu\ Mono\ derivative\ Powerline:h11
+set encoding=utf-8
+let g:Powerline_symbols = 'fancy'
+let g:airline_theme='solarized'
+
+"map leader to space
+let mapleader = "\<Space>"
+
+"buffer navigation
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l

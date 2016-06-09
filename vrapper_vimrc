@@ -1,0 +1,32 @@
+filetype plugin indent on
+
+"keys remaping
+inoremap <S-Space> <Esc>
+vnoremap <S-Space> <Esc>
+no <up> <Nop>
+no <down> <Nop>
+no <left> <Nop>
+no <right> <Nop>
+ino <up> <Nop>
+ino <down> <Nop>
+ino <left> <Nop>
+ino <right> <Nop>
+
+set rnu
+set number
+
+"remap :
+"nnoremap ; :
+
+"for java and C++ like languages
+inoremap ;; <Esc>A;
+inoremap {{ <Esc>A{<CR>}<Esc>O
+inoremap <S-Space> <Esc>
+set tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
+
+map <F7> mzgg=G`z
+
+"color scheme
+syntax on
+"source ~\vimfiles\colors\eclipse.vim
+"colorscheme eclipse
