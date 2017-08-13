@@ -12,16 +12,13 @@ ino <down> <Nop>
 ino <left> <Nop>
 ino <right> <Nop>
 
-set rnu
-set number
-
-"remap :
-"nnoremap ; :
-
 "for java and C++ like languages
 inoremap ;; <Esc>A;
-inoremap {{ <Esc>A{<CR>}<Esc>O
+inoremap {{ <Esc>A{<CR><Esc>kcc
 inoremap <S-Space> <Esc>
+inoremap jj <Esc>
+inoremap jk <Esc>
+inoremap kj <Esc>
 set tabstop=4 softtabstop=4 shiftwidth=4 noexpandtab
 
 map <F7> mzgg=G`z

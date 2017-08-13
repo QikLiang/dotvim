@@ -1,7 +1,18 @@
-call plug#begin('$XDG_CONFIG_HOME\nvim\plugged')
+if has('Unix') && $XDG_CONFIG_HOME==''
+	let $XDG_CONFIG_HOME='~/.config'
+endif
+
+call plug#begin('$XDG_CONFIG_HOME/nvim/plugged')
+
+"Qt & qml
+Plug 'peterhoeg/vim-qml'
+
+"java autocomplete
+Plug 'artur-shaik/vim-javacomplete2'
 
 "git
 Plug 'tpope/vim-fugitive'
+"Plug 'airblade/vim-gitgutter'
 
 "smooth scrolling
 Plug 'yonchu/accelerated-smooth-scroll'
@@ -10,9 +21,12 @@ Plug 'yonchu/accelerated-smooth-scroll'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
+"start page
+Plug 'mhinz/vim-startify'
+
 "deoplete
 function! DoRemote(arg)
-  UpdateRemotePlugins
+	UpdateRemotePlugins
 endfunction
 Plug 'Shougo/deoplete.nvim' ", { 'do': function('DoRemote') }
 
@@ -21,17 +35,19 @@ Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
 "Optional:
-  Plug 'honza/vim-snippets'
+Plug 'honza/vim-snippets'
 
 "file search
 Plug 'ctrlpvim/ctrlp.vim'
 
-  "caps lock"
+"caps lock"
 Plug 'tpope/vim-capslock'
 
 "color scheme
 Plug 'mhartington/oceanic-next'
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
+Plug 'iCyMind/NeoSolarized'
+Plug 'jszakmeister/vim-togglecursor'
 
 "syntax check"
 "Plug 'scrooloose/syntastic'
@@ -48,7 +64,7 @@ Plug 'kana/vim-textobj-indent'
 Plug 'saaguero/vim-textobj-pastedtext'
 "make default text objects seek for adjacent when not in one
 Plug 'wellle/targets.vim'
-"add function text object as 'f' 
+"add function text object as 'f'
 Plug 'kana/vim-textobj-function'
 "commented text as text object
 Plug 'glts/vim-textobj-comment'
@@ -64,21 +80,19 @@ Plug 'justinmk/vim-sneak'
 " Add plugins to &runtimepath
 call plug#end()
 
-cnoremap \init<CR> e C:\Users\Qi\AppData\Local\nvim\init.vim<CR>
+cnoremap \init<CR> e ~/vim/init.vim<CR>
 
-source ~\vim\_vimrc 
+source ~/vim/vim-nvim_vimrc
 
 "use alt for mapping
 set winaltkeys=no
-"make file search easier
-cd C:\Users\Qi\Desktop\programs
 let g:ctrlp_working_path_mode = 'a'
 
 ""code folding
 set foldmethod=syntax
 "autocmd BufWinLeave *.* mkview
 "autocmd BufWinEnter *.* silent loadview
-autocmd BufWinEnter *.java set foldnestmax=2 
+autocmd BufWinEnter *.java set foldnestmax=2
 
 "caps lock mapping
 imap <Esc> <Plug>CapsLockToggle
@@ -89,6 +103,7 @@ let g:pastedtext_select_key = 'P'
 "Neomake
 let g:neomake_open_list = 1
 let g:neomake_list_height = 4
+let g:neomake_java_javac_classpath = '.'
 
 ""initial syntastic settings
 "set statusline+=%#warningmsg#
@@ -102,17 +117,32 @@ let g:neomake_list_height = 4
 ""change directory to current file before saving
 "cnoremap w<CR> lcd %:p:h<CR>:w
 
-""initial height of syntastic window
+"autocomplete
+let g:deoplete#enable_at_startup = 1
+let g:python3_host_prog = '/usr/bin/python3'
+set omnifunc=syntaxcomplete#Complete
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+let g:deoplete#enable_ignore_case = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#enable_refresh_always = 1
+let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
+let g:deoplete#omni#input_patterns.java = [
+			\'[^. \t0-9]\.\w*',
+			\'[^. \t0-9]\->\w*',
+			\'[^. \t0-9]\::\w*',
+			\]
+set icm=nosplit
+
+""initia of syntastic window
 "let g:syntastic_loc_list_height=5
 
 "set window size
-let g:GuiWindowMaximized = 1
-set GuiWindowMaximized
+"let g:GuiWindowMaximized = 1
+"set GuiWindowMaximized
 "set lines=53 columns=190
 
-"autocomplete 
-imap <S-Enter> <c-n>
-let g:deoplete#enable_at_startup = 1
+"autocomplete
+imap <A-j> <c-n>
 
 "map leader to space
 let mapleader = "\<Space>"
@@ -121,12 +151,12 @@ let mapleader = "\<Space>"
 set gdefault
 
 syntax enable
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-nmap <silent> <F6> :let &background = ( &background == "dark"? "light" : "dark" )<CR> 
+"set termguicolors
+nmap <silent> <F6> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
 set background=dark
 colorscheme solarized
-":colorscheme OceanicNext<CR> 
-"au VimEnter * :colorscheme OceanicNext<CR>
+hi Normal ctermbg=none
+highlight NonText ctermbg=none
 
 "buffer navigation
 tnoremap <A-h> <C-\><C-n><C-w>h
@@ -137,3 +167,12 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
+
+"escape terminal
+tnoremap <esc> <C-\><C-n>
+autocmd BufEnter term://* startinsert
+
+"neomake shortcut
+"autocmd! BufWritePost *.java <Plug>(JavaComplete-Imports-Add)
+autocmd! BufWritePost * Neomake
+cnoremap lc lclose<cr>

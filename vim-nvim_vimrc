@@ -1,20 +1,44 @@
-map <F7> mzgg=G`z
+autocmd BufWritePre * :execute "normal! mkHml" | let _s=@/ | %s/\s\+$//e | let @/=_s | nohl | unlet _s | normal! `lzt`k
+"prevent /* */ style cooments causing indentation warning
+let g:airline#extensions#whitespace#mixed_indent_algo = 1
+
+set relativenumber
+set number
+autocmd BufReadPost *.* set relativenumber
+autocmd BufEnter *.* set relativenumber
+autocmd BufLeave *.* set norelativenumber
+
+"remove auto comment
+set fo-=rco
+
+set hlsearch!
+
+"set split buffer direction
+set splitbelow
+set splitright
+
+"sudo w
+cmap w!! w !sudo tee > /dev/null %
 
 "use alt for mapping
 set winaltkeys=no
 
 "make file search easier
-cd C:\Users\Qi\Desktop\programs
+cd ~/programs
 let g:ctrlp_working_path_mode = 'a'
 autocmd BufReadPost * :lcd %:p:h
 
 "code folding
 set foldmethod=syntax
-autocmd BufWinLeave *.* mkview
-autocmd BufWinEnter *.* silent loadview
-autocmd BufWinEnter *.java set foldnestmax=2
-autocmd BufWinEnter *.cpp set foldnestmax=1
-autocmd BufReadPost *.java :normal! zRzm
+autocmd FileType java set foldnestmax=2
+autocmd FileType cpp set foldnestmax=1
+autocmd FileType c set foldnestmax=1
+autocmd FileType java :normal! zRzm
+
+"indent
+set tabstop=4
+set shiftwidth=4
+"autocmd InsertLeave * :normal! mkHmlgg=G`lzt`k
 
 "caps lock mapping
 imap <Esc> <Plug>CapsLockToggle
@@ -25,21 +49,43 @@ let g:AutoPairsMultilineClose = 0
 let g:pastedtext_select_key = 'P'
 
 "autocomplete
-imap <S-Enter> <c-n>
+imap <A-Enter> <c-n>
+setlocal formatoptions-=o formatoptions-=r
+
+"indent jon files
+nmap =j :%!python -m json.tool<CR>
+
+"escape mapping
+inoremap <S-Space> <Esc>
+inoremap jj <Esc>
+inoremap kj <Esc>
+inoremap jk <Esc>
+inoremap ;; <esc>A;
+inoremap {{ <esc>A{<cr>}<esc>O
 
 "search and replace
 set gdefault
 
 syntax enable
 
-colorscheme solarized
 set laststatus=2
-let g:airline_powerline_fonts=1
+let g:airline_powerline_fonts=0
 "set guifont=Inconsolata-g\ for\ Powerline:h12
-set guifont=Ubuntu\ Mono\ derivative\ Powerline:h11
+"set guifont=PowerlineSymbols
+"set guifont=Ubuntu\ Mono\ derivative\ Powerline
 set encoding=utf-8
-let g:Powerline_symbols = 'fancy'
-let g:airline_theme='solarized'
+"let g:Powerline_symbols = 'fancy'
+let g:airline_theme='dark'
+if !exists('g:airline_symbols')
+	let g:airline_symbols = {}
+endif
+let g:airline_left_sep = '⮀'
+let g:airline_left_alt_sep = '⮁'
+let g:airline_right_sep = '⮂'
+let g:airline_right_alt_sep = '⮃'
+let g:airline_symbols.branch = '⭠'
+let g:airline_symbols.readonly = '⭤'
+let g:airline_symbols.linenr = '⭡'
 
 "map leader to space
 let mapleader = "\<Space>"
