@@ -1,18 +1,32 @@
+"download vim plug if doesn't exist yet
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 if has('Unix') && $XDG_CONFIG_HOME==''
 	let $XDG_CONFIG_HOME='~/.config'
 endif
 
 call plug#begin('$XDG_CONFIG_HOME/nvim/plugged')
 
-"Qt & qml
-Plug 'peterhoeg/vim-qml'
+"multi language syntax
+Plug 'sheerun/vim-polyglot'
+
+"Prolog
+Plug 'mndrix/prolog.vim', { 'for': 'prolog' }
 
 "java autocomplete
-Plug 'artur-shaik/vim-javacomplete2'
+Plug 'artur-shaik/vim-javacomplete2', {'for': 'java'}
+
+"javascript autocomplete
+Plug '1995eaton/vim-better-javascript-completion',
+			\{'for': 'javascript'}
 
 "git
 Plug 'tpope/vim-fugitive'
-"Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 
 "smooth scrolling
 Plug 'yonchu/accelerated-smooth-scroll'
@@ -44,17 +58,22 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-capslock'
 
 "color scheme
-Plug 'mhartington/oceanic-next'
+"Plug 'mhartington/oceanic-next'
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
-Plug 'iCyMind/NeoSolarized'
+"Plug 'iCyMind/NeoSolarized'
+
 Plug 'jszakmeister/vim-togglecursor'
 
 "syntax check"
 "Plug 'scrooloose/syntastic'
-Plug 'benekastah/neomake'
+"Plug 'benekastah/neomake'
+Plug 'w0rp/ale'
 
 "auto complete parens
 Plug 'jiangmiao/auto-pairs'
+
+"auto detect indent
+Plug 'tpope/vim-sleuth'
 
 "add text object dependencies
 Plug 'kana/vim-textobj-user'
@@ -80,30 +99,24 @@ Plug 'justinmk/vim-sneak'
 " Add plugins to &runtimepath
 call plug#end()
 
+"disable linter for MIPS
+let g:ale_linters = {'asm': []}
+
 cnoremap \init<CR> e ~/vim/init.vim<CR>
 
 source ~/vim/vim-nvim_vimrc
 
-"use alt for mapping
-set winaltkeys=no
 let g:ctrlp_working_path_mode = 'a'
-
-""code folding
-set foldmethod=syntax
-"autocmd BufWinLeave *.* mkview
-"autocmd BufWinEnter *.* silent loadview
-autocmd BufWinEnter *.java set foldnestmax=2
 
 "caps lock mapping
 imap <Esc> <Plug>CapsLockToggle
 
-"paste test test object keybinding
-let g:pastedtext_select_key = 'P'
-
 "Neomake
-let g:neomake_open_list = 1
-let g:neomake_list_height = 4
-let g:neomake_java_javac_classpath = '.'
+"let g:neomake_open_list = 1
+"let g:neomake_list_height = 4
+"let g:neomake_java_javac_classpath = '.'
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
 
 ""initial syntastic settings
 "set statusline+=%#warningmsg#
@@ -141,16 +154,6 @@ set icm=nosplit
 "set GuiWindowMaximized
 "set lines=53 columns=190
 
-"autocomplete
-imap <A-j> <c-n>
-
-"map leader to space
-let mapleader = "\<Space>"
-
-"search and replace
-set gdefault
-
-syntax enable
 "set termguicolors
 nmap <silent> <F6> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
 set background=dark
@@ -174,5 +177,6 @@ autocmd BufEnter term://* startinsert
 
 "neomake shortcut
 "autocmd! BufWritePost *.java <Plug>(JavaComplete-Imports-Add)
-autocmd! BufWritePost * Neomake
-cnoremap lc lclose<cr>
+"call neomake#configure#automake('w')
+"autocmd! BufWritePost * :Neomake!
+"cnoremap lc lclose<cr>

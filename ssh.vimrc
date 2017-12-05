@@ -1,3 +1,10 @@
+syntax enable
+filetype plugin indent on
+set nocompatible
+set bs=indent,eol,start
+set ai
+set gdefault
+
 inoremap jk <Esc>
 inoremap jj <Esc>
 inoremap kj <Esc>

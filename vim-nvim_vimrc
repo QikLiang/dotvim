@@ -2,8 +2,8 @@ autocmd BufWritePre * :execute "normal! mkHml" | let _s=@/ | %s/\s\+$//e | let @
 "prevent /* */ style cooments causing indentation warning
 let g:airline#extensions#whitespace#mixed_indent_algo = 1
 
-set relativenumber
 set number
+set relativenumber
 autocmd BufReadPost *.* set relativenumber
 autocmd BufEnter *.* set relativenumber
 autocmd BufLeave *.* set norelativenumber
@@ -30,18 +30,23 @@ autocmd BufReadPost * :lcd %:p:h
 
 "code folding
 set foldmethod=syntax
+"autocmd BufWinLeave *.* mkview
+"autocmd BufWinEnter *.* silent loadview
+autocmd FileType * :normal! zR
 autocmd FileType java set foldnestmax=2
+autocmd FileType java :normal! zRzm
 autocmd FileType cpp set foldnestmax=1
 autocmd FileType c set foldnestmax=1
-autocmd FileType java :normal! zRzm
+autocmd FileType c :normal! zR
 
 "indent
-set tabstop=4
-set shiftwidth=4
-"autocmd InsertLeave * :normal! mkHmlgg=G`lzt`k
-
-"caps lock mapping
-imap <Esc> <Plug>CapsLockToggle
+autocmd FileType *          set tabstop=4 shiftwidth=4
+autocmd FileType javascript set tabstop=2 shiftwidth=2 expandtab
+autocmd FileType java       set tabstop=4 shiftwidth=4
+autocmd FileType cpp        set tabstop=4 shiftwidth=4
+autocmd FileType c          set tabstop=4 shiftwidth=4
+autocmd FileType verilog    set tabstop=2 shiftwidth=2 expandtab
+autocmd FileType haskell    set tabstop=2 shiftwidth=2 expandtab
 
 let g:AutoPairsMultilineClose = 0
 
@@ -49,11 +54,13 @@ let g:AutoPairsMultilineClose = 0
 let g:pastedtext_select_key = 'P'
 
 "autocomplete
+imap <A-j> <c-n>
 imap <A-Enter> <c-n>
+"remove auto insert comment on new line
 setlocal formatoptions-=o formatoptions-=r
 
-"indent jon files
-nmap =j :%!python -m json.tool<CR>
+"indent json files
+nmap =J :%!python -m json.tool<CR>
 
 "escape mapping
 inoremap <S-Space> <Esc>
@@ -69,23 +76,10 @@ set gdefault
 syntax enable
 
 set laststatus=2
-let g:airline_powerline_fonts=0
-"set guifont=Inconsolata-g\ for\ Powerline:h12
-"set guifont=PowerlineSymbols
-"set guifont=Ubuntu\ Mono\ derivative\ Powerline
+let g:airline_powerline_fonts=1
 set encoding=utf-8
-"let g:Powerline_symbols = 'fancy'
+let g:Powerline_symbols = 'fancy'
 let g:airline_theme='dark'
-if !exists('g:airline_symbols')
-	let g:airline_symbols = {}
-endif
-let g:airline_left_sep = '⮀'
-let g:airline_left_alt_sep = '⮁'
-let g:airline_right_sep = '⮂'
-let g:airline_right_alt_sep = '⮃'
-let g:airline_symbols.branch = '⭠'
-let g:airline_symbols.readonly = '⭤'
-let g:airline_symbols.linenr = '⭡'
 
 "map leader to space
 let mapleader = "\<Space>"
@@ -95,3 +89,7 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
+nnoremap <A-,> <C-W><
+nnoremap <A-.> <C-W>>
+nnoremap <A-=> <C-W>+
+nnoremap <A--> <C-W>-
