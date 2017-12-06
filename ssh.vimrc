@@ -1,4 +1,5 @@
 syntax enable
+colorscheme desert
 filetype plugin indent on
 set nocompatible
 set bs=indent,eol,start
