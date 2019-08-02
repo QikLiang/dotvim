@@ -35,7 +35,7 @@ set foldmethod=syntax
 autocmd FileType * :normal! zR
 autocmd FileType java set foldnestmax=2
 autocmd FileType java :normal! zRzm
-autocmd FileType cpp set foldnestmax=1
+autocmd FileType cpp if search('class', 'nw')!=0 | setlocal foldnestmax=2 | else | setlocal foldnestmax=1 | endif
 autocmd FileType c set foldnestmax=1
 autocmd FileType c :normal! zR
 
