@@ -1,28 +1,39 @@
 "download vim plug if doesn't exist yet
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+if empty(glob('$HOME/.config/nvim/autoload/plug.vim'))
+  silent !curl -fLo $HOME/.config/nvim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 if has('Unix') && $XDG_CONFIG_HOME==''
-	let $XDG_CONFIG_HOME='~/.config'
+	let $XDG_CONFIG_HOME='$HOME/.config'
 endif
 
 call plug#begin('$XDG_CONFIG_HOME/nvim/plugged')
+Plug 'tweekmonster/startuptime.vim'
+
+"gdb integration
+Plug 'sakhnik/nvim-gdb', {'for': ['c', 'cpp']}
+
+Plug 'tpope/vim-fireplace', {'for': 'clojure'}
 
 "multi language syntax
-Plug 'sheerun/vim-polyglot'
+"Plug 'sheerun/vim-polyglot'
+"Python syntax - doesn't work when there's from x import *
+Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
+
+Plug 'luochen1990/rainbow'
 
 "Prolog
 Plug 'mndrix/prolog.vim', { 'for': 'prolog' }
 
-"java autocomplete
-Plug 'artur-shaik/vim-javacomplete2', {'for': 'java'}
-
 "javascript autocomplete
 Plug '1995eaton/vim-better-javascript-completion',
 			\{'for': 'javascript'}
+
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+Plug 'Shougo/echodoc.vim'
 
 "git
 Plug 'tpope/vim-fugitive'
@@ -38,11 +49,20 @@ Plug 'vim-airline/vim-airline-themes'
 "start page
 Plug 'mhinz/vim-startify'
 
+"Language Server Protocol
+"Plug 'autozimu/LanguageClient-neovim', {
+    "\ 'branch': 'next',
+    "\ 'do': 'bash install.sh',
+    "\ }
+
+"coc lsp
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
 "deoplete
 function! DoRemote(arg)
 	UpdateRemotePlugins
 endfunction
-Plug 'Shougo/deoplete.nvim' ", { 'do': function('DoRemote') }
+"Plug 'Shougo/deoplete.nvim' ", { 'do': function('DoRemote') }
 
 "snipmate
 Plug 'MarcWeber/vim-addon-mw-utils'
@@ -58,16 +78,16 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tpope/vim-capslock'
 
 "color scheme
-"Plug 'mhartington/oceanic-next'
+Plug 'mhartington/oceanic-next'
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
+"works well with floating windows
+Plug 'morhetz/gruvbox'
 "Plug 'iCyMind/NeoSolarized'
 
 Plug 'jszakmeister/vim-togglecursor'
 
 "syntax check"
-"Plug 'scrooloose/syntastic'
-"Plug 'benekastah/neomake'
-Plug 'w0rp/ale'
+"Plug 'w0rp/ale'
 
 "auto complete parens
 Plug 'jiangmiao/auto-pairs'
@@ -96,11 +116,10 @@ Plug 'scrooloose/nerdcommenter'
 "Plug 'easymotion/vim-easymotion'
 Plug 'justinmk/vim-sneak'
 
+Plug 'KeitaNakamura/tex-conceal.vim', {'for': 'tex'}
+
 " Add plugins to &runtimepath
 call plug#end()
-
-"disable linter for MIPS
-let g:ale_linters = {'asm': []}
 
 cnoremap \init<CR> e ~/vim/init.vim<CR>
 
@@ -111,55 +130,76 @@ let g:ctrlp_working_path_mode = 'a'
 "caps lock mapping
 imap <Esc> <Plug>CapsLockToggle
 
-"Neomake
-"let g:neomake_open_list = 1
-"let g:neomake_list_height = 4
-"let g:neomake_java_javac_classpath = '.'
-let g:ale_lint_on_text_changed = 'normal'
-let g:ale_lint_on_insert_leave = 1
-
-""initial syntastic settings
-"set statusline+=%#warningmsg#
-"set statusline+=%{SyntasticStatuslineFlag()}
-"set statusline+=%*
-
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 0
-"let g:syntastic_check_on_wq = 1
-""change directory to current file before saving
-"cnoremap w<CR> lcd %:p:h<CR>:w
+"lint
+highlight ALEWarning ctermbg=NONE
+"language client
+let g:LanguageClient_serverCommands = {
+    \ 'cpp': ['cquery', '--language-server', '--log-file=/tmp/cq.log'],
+    \ 'c': ['cquery', '--language-server', '--log-file=/tmp/cq.log']
+    \ }
+" \'python' : ['pyls', '-v'],
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_settingsPath = '/home/qi/.config/nvim/lssettings.json'
+nnoremap <silent> H :call LanguageClient_textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> <leader>r :call LanguageClient_textDocument_rename()<CR>
+nnoremap <silent> <leader>u :call LanguageClient_textDocument_references() <bar> lopen <bar> nnoremap <buffer> q :lclose<lt>CR><CR>
+"let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_diagnosticsDisplay = { 1: { "name": "Error", "signText": ">>" }, 2: { "name": "Warning", "signText": "--" }, 3: { "name": "Information", "signText": "i" }, 4: { "name": "Hint", "signText": ">" } }
+set completeopt-=preview
 
 "autocomplete
-let g:deoplete#enable_at_startup = 1
+let g:snipMate = {}
+let g:snipMate.overide = 1
 let g:python3_host_prog = '/usr/bin/python3'
 set omnifunc=syntaxcomplete#Complete
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
-let g:deoplete#enable_ignore_case = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#enable_refresh_always = 1
-let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
-let g:deoplete#omni#input_patterns.java = [
-			\'[^. \t0-9]\.\w*',
-			\'[^. \t0-9]\->\w*',
-			\'[^. \t0-9]\::\w*',
-			\]
+"autocmd FileType java setlocal omnifunc=javacomplete#Complete
+"let g:deoplete#enable_at_startup = 1
+"let g:deoplete#enable_ignore_case = 1
+"let g:deoplete#enable_smart_case = 1
+"let g:deoplete#enable_refresh_always = 1
+"let g:deoplete#omni#input_patterns = get(g:,'deoplete#omni#input_patterns',{})
+"call deoplete#custom#source('_', 'converter', 'converter_auto_paren')
 set icm=nosplit
+set shortmess+=c
+"for echodoc
+let g:echodoc_enable_at_startup = 1
+set noshowmode
 
-""initia of syntastic window
-"let g:syntastic_loc_list_height=5
+"latex
+au BufWritePost *.tex :Latexmk
+au BufReadPost *.tex :LatexView
+au FileType tex :set conceallevel=2
+au FileType tex :let g:tex_conceal="abdgm"
 
-"set window size
-"let g:GuiWindowMaximized = 1
-"set GuiWindowMaximized
-"set lines=53 columns=190
+"clojure repl, try catch if repl not open
+au BufWritePost *.clj,*.cljc :try | Require | catch | | endtry
+
+"indentation
+set formatexpr=LanguageClient_textDocument_rangeFormatting()
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
+  indent = {
+    enable = true
+  }
+}
+EOF
 
 "set termguicolors
-nmap <silent> <F6> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
 set background=dark
 colorscheme solarized
+hi Pmenu ctermbg=236 ctermfg=yellow
+hi PmenuSel ctermbg=24 ctermfg=yellow
 hi Normal ctermbg=none
-highlight NonText ctermbg=none
+hi NonText ctermbg=none
+hi Conceal ctermbg=none
+au filetype python hi semshiSelected ctermbg=none ctermfg=190
+let g:rainbow_active = 1 "ranbow parans
 
 "buffer navigation
 tnoremap <A-h> <C-\><C-n><C-w>h
@@ -170,13 +210,12 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
+tnoremap <C-v> <C-\><C-n>pa
 
 "escape terminal
 tnoremap <esc> <C-\><C-n>
-autocmd BufEnter term://* startinsert
-
-"neomake shortcut
-"autocmd! BufWritePost *.java <Plug>(JavaComplete-Imports-Add)
-"call neomake#configure#automake('w')
-"autocmd! BufWritePost * :Neomake!
-"cnoremap lc lclose<cr>
+autocmd BufEnter term://*
+      \ exec search('\S\_s*\%$','n')<=line('.')
+      \ ? 'startinsert' : ''
+"\_s = \s\n; \%$ = end of file; 'n' is don't move cursor
+"line('.') = line at cursor

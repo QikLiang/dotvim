@@ -3,15 +3,19 @@ autocmd BufWritePre * :execute "normal! mkHml" | let _s=@/ | %s/\s\+$//e | let @
 let g:airline#extensions#whitespace#mixed_indent_algo = 1
 
 set number
-set relativenumber
-autocmd BufReadPost *.* set relativenumber
-autocmd BufEnter *.* set relativenumber
-autocmd BufLeave *.* set norelativenumber
+augroup numbertoggle
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu | set rnu   | endif
+  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu | set nornu | endif
+augroup END
+
+"scroll
+set mouse=a
+nmap <up> <C-Y>
+nmap <down> <C-E>
 
 "remove auto comment
 set fo-=rco
-
-set hlsearch!
 
 "set split buffer direction
 set splitbelow
@@ -24,29 +28,33 @@ cmap w!! w !sudo tee > /dev/null %
 set winaltkeys=no
 
 "make file search easier
-cd ~/programs
+lcd ~/programs
 let g:ctrlp_working_path_mode = 'a'
-autocmd BufReadPost * :lcd %:p:h
+autocmd BufReadPost * :cd %:p:h
 
 "code folding
 set foldmethod=syntax
 "autocmd BufWinLeave *.* mkview
 "autocmd BufWinEnter *.* silent loadview
-autocmd FileType * :normal! zR
+"autocmd FileType * :normal! zR
 autocmd FileType java set foldnestmax=2
-autocmd FileType java :normal! zRzm
+"autocmd FileType java :normal! zRzm
 autocmd FileType cpp if search('class', 'nw')!=0 | setlocal foldnestmax=2 | else | setlocal foldnestmax=1 | endif
+autocmd FileType cpp set foldnestmax=1
 autocmd FileType c set foldnestmax=1
 autocmd FileType c :normal! zR
 
 "indent
 autocmd FileType *          set tabstop=4 shiftwidth=4
 autocmd FileType javascript set tabstop=2 shiftwidth=2 expandtab
+autocmd FileType typescript set tabstop=2 shiftwidth=2 expandtab
 autocmd FileType java       set tabstop=4 shiftwidth=4
 autocmd FileType cpp        set tabstop=4 shiftwidth=4
 autocmd FileType c          set tabstop=4 shiftwidth=4
 autocmd FileType verilog    set tabstop=2 shiftwidth=2 expandtab
+autocmd FileType python     set tabstop=4 shiftwidth=4 expandtab
 autocmd FileType haskell    set tabstop=2 shiftwidth=2 expandtab
+autocmd FileType clojure    set tabstop=2 shiftwidth=2 expandtab
 
 let g:AutoPairsMultilineClose = 0
 
@@ -55,6 +63,7 @@ let g:pastedtext_select_key = 'P'
 
 "autocomplete
 imap <A-j> <c-n>
+imap <A-k> <c-p>
 imap <A-Enter> <c-n>
 "remove auto insert comment on new line
 setlocal formatoptions-=o formatoptions-=r
@@ -69,6 +78,7 @@ inoremap kj <Esc>
 inoremap jk <Esc>
 inoremap ;; <esc>A;
 inoremap {{ <esc>A{<cr>}<esc>O
+autocmd FileType python inoremap :: <esc>A:
 
 "search and replace
 set gdefault

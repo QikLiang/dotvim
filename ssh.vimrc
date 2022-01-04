@@ -30,6 +30,25 @@ set winaltkeys=no
 nmap <up> <C-Y>
 nmap <down> <C-E>
 
+"remove auto comment
+set fo-=rco
+
+"set split buffer direction
+set splitbelow
+set splitright
+
+"indent
+autocmd FileType *          set tabstop=4 shiftwidth=4
+autocmd FileType javascript set tabstop=2 shiftwidth=2 expandtab
+autocmd FileType java       set tabstop=4 shiftwidth=4
+autocmd FileType cpp        set tabstop=4 shiftwidth=4
+autocmd FileType c          set tabstop=4 shiftwidth=4
+autocmd FileType python     set tabstop=4 shiftwidth=4 expandtab
+
+"autocomplete
+imap <A-j> <c-n>
+imap <A-k> <c-p>
+
 set number
 set relativenumber
 let &t_SI = "\<Esc>]50;CursorShape=1\x7"
